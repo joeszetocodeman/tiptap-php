@@ -132,6 +132,7 @@ class DOMSerializer
             foreach ($markTagsToClose as $index => $markToClose) {
                 if ($markExtension == $markToClose[0] && $mark == $markToClose[1]) {
                     $foundIndex = $index;
+
                     break;
                 }
             }
