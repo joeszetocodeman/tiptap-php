@@ -3,6 +3,8 @@
 namespace Tiptap\Tests\HTMLOutput\Mix;
 
 use Tiptap\Editor;
+use Tiptap\Extensions\StarterKit;
+use Tiptap\Marks\TextStyle;
 
 test('multiple marks get rendered correctly', function () {
     $document = [
@@ -209,4 +211,47 @@ test('multiple marks get rendered correctly, when overlapping passage with multi
         ->getHTML();
 
     expect($result)->toEqual('<p><strong><s>lorem <em>ipsum</em></s></strong><s><em> dolor</em></s></p>');
+});
+
+test('renders duplicate mark types as nested elements', function () {
+    $document = [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Example',
+                        'marks' => [
+                            [
+                                'type' => 'bold',
+                            ],
+                            [
+                                'type' => 'textStyle',
+                            ],
+                            [
+                                'type' => 'textStyle',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'text',
+                        'text' => ' Text',
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    $result = (new Editor([
+        'extensions' => [
+            new StarterKit,
+            new TextStyle,
+        ],
+    ]))
+        ->setContent($document)
+        ->getHTML();
+
+    expect($result)->toEqual('<p><strong><span><span>Example</span></span></strong> Text</p>');
 });
